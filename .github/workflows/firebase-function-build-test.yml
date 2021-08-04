@@ -12,5 +12,5 @@ jobs:
 
       - name: Build and test
         run: |
-        cd functions
-        npm run lint && npm run build
+          cd functions
+          npm run lint && npm run build
