@@ -1,19 +1,25 @@
 import * as functions from "firebase-functions";
+import {ProxyResponse} from "./models/ProxyResponse";
 
 export const postmanDtProxy = functions.region("australia-southeast1")
     .https.onRequest((request, response) => {
-      let responseMessage = "";
+      const proxyResponse: ProxyResponse = {
+        message: "Unrecognized",
+        statusCode: 400,
+      };
+
       switch (request.method) {
         case "GET":
-          responseMessage = "Hey, I just received a GET!";
+          proxyResponse.message = "Hey, I just received a GET!";
+          proxyResponse.statusCode = 200;
           break;
-        case "POST":
-          responseMessage = "Hey, I just got POST-ed";
+        case "PUT":
+          proxyResponse.message = "Hey, I just got PUT-ed";
+          proxyResponse.statusCode = 200;
           break;
         default:
-          responseMessage = "Unrecognized";
           break;
       }
       //    functions.logger.info("Hello logs!", {structuredData: true});
-      response.send(responseMessage);
+      response.status(proxyResponse.statusCode).json(proxyResponse);
     });
