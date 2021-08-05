@@ -3,6 +3,8 @@ import * as dayjs from "dayjs";
 import * as utc from "dayjs/plugin/utc";
 
 export class TransferTokenGenerator {
+  private md5Sum = crypto.createHash("md5")
+
   constructor(public readonly token: string,
               public readonly site1: string,
               public readonly site2: string) {
@@ -12,12 +14,13 @@ export class TransferTokenGenerator {
   }
 
   getTransferToken(): string {
-    return `${this.generateSiteKey()}${this.formatKeyDate()}`;
+    return this.md5Sum.update(`${this.generateSiteKey()}${this.formatKeyDate()}`)
+        .digest("hex");
   }
 
   private generateSiteKey(): string {
-    const md5Sum = crypto.createHash("md5");
-    return md5Sum.update(`${this.token}${this.site1}${this.site2}`).digest("hex");
+    return this.md5Sum.update(`${this.token}${this.site1}${this.site2}`)
+        .digest("hex");
   }
 
   private formatKeyDate():string {
