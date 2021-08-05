@@ -1,5 +1,6 @@
 import * as crypto from "crypto";
 import * as dayjs from "dayjs";
+import * as utc from "dayjs/plugin/utc";
 
 export class TransferTokenGenerator {
   constructor(public readonly token: string,
@@ -20,6 +21,7 @@ export class TransferTokenGenerator {
   }
 
   private formatKeyDate():string {
-    return dayjs().format("YYYY-MM-DDHH");
+    dayjs.extend(utc);
+    return dayjs.utc().format("YYYY-MM-DDHH");
   }
 }
