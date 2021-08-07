@@ -5,7 +5,7 @@ import {ContactResponse} from "../model/ContactResponse";
 import {TransferTokenGenerator} from "../model/TransferTokenGenerator";
 import {PostmanState} from "../model/PostmanState";
 
-export class DTRequestService {
+export class ContactService {
     private contactsPath = "/wp-json/dt-posts/v2/contacts/";
 
     constructor(public readonly baseUrl: string,
