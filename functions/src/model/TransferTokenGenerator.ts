@@ -8,7 +8,7 @@ export class TransferTokenGenerator {
   constructor(public readonly token: string,
               public readonly site1: string,
               public readonly site2: string,
-              public formattedDate?: string) {
+              public readonly formattedDate: string) {
     if (this.token == undefined || this.site1 == undefined || this.site2 == undefined) {
       throw new Error("Token arguments not set in environment.");
     }
