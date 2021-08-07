@@ -39,4 +39,6 @@ function verifyAuthentication(context: CallableContext) {
         "You must be authenticated to make this call."
     );
   }
+
+  functions.logger.info(`Request from ${context.auth.token.email} to ${context.rawRequest.path}`);
 }
