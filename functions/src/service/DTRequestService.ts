@@ -1,7 +1,9 @@
 import * as axios from "axios";
+import * as functions from "firebase-functions";
 import {Contact} from "../model/Contact";
 import {ContactResponse} from "../model/ContactResponse";
 import {TransferTokenGenerator} from "../model/TransferTokenGenerator";
+import {PostmanState} from "../model/PostmanState";
 
 export class DTRequestService {
     private contactsPath = "/wp-json/dt-posts/v2/contacts/";
@@ -10,7 +12,7 @@ export class DTRequestService {
                 public readonly tokenGenerator: TransferTokenGenerator) {
     }
 
-    async getContactsByPostmanState(postmanState: string): Promise<Contact[]> {
+    async getContactsByPostmanState(postmanState: PostmanState): Promise<Contact[]> {
       try {
         const response = await axios.default
             .get(`${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}`,
@@ -22,11 +24,31 @@ export class DTRequestService {
         if (response.data.posts.length == 0) {
           return [];
         }
-        // eslint-disable-next-line camelcase
+
         return response.data.posts
             .map((contactResponse: ContactResponse) => this.transformResponse(contactResponse));
       } catch (error) {
-        throw new Error(`Problem retrieving contacts. ${error.message}`);
+        throw new functions.https.HttpsError("internal",
+            "Problem retrieving contacts",
+            error);
+      }
+    }
+
+    async updateContactsPostmanState(postmanState: PostmanState, userId: number): Promise<void> {
+      try {
+        await axios.default
+            .post(`${this.baseUrl}${this.contactsPath}${userId}`,
+                {
+                  "nt_postman_keyselect": postmanState,
+                },
+                {
+                  headers: {"Authorization": `Bearer ${this.tokenGenerator.getTransferToken()}`},
+                }
+            );
+      } catch (error) {
+        throw new functions.https.HttpsError("internal",
+            `Problem updating contact with ${postmanState} for user ${userId}`,
+            error);
       }
     }
 
