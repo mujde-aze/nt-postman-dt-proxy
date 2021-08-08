@@ -13,17 +13,10 @@ export class ContactService {
 
     async getContactsByPostmanState(postmanState: PostmanState, assignedTo?: string): Promise<Contact[]> {
       let response: axios.AxiosResponse;
-      let requestPath: string;
-
-      if (assignedTo) {
-        requestPath = `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}&assigned_to[]=${assignedTo}`;
-      } else {
-        requestPath = `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}`;
-      }
 
       try {
         response = await axios.default
-            .get(requestPath,
+            .get(this.getRequestPath(postmanState, assignedTo),
                 {
                   headers: {"Authorization": `Bearer ${this.transferToken}`},
                 }
@@ -58,6 +51,14 @@ export class ContactService {
         throw new functions.https.HttpsError("internal",
             `Problem updating contact with ${postmanState} for user ${userId}`,
             error);
+      }
+    }
+
+    private getRequestPath(postmanState: PostmanState, assignedTo?: string): string {
+      if (assignedTo) {
+        return `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}&assigned_to[]=${assignedTo}`;
+      } else {
+        return `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}`;
       }
     }
 

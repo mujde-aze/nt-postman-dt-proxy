@@ -11,11 +11,14 @@ let transferTokenGenerator: TransferTokenGenerator;
 export const getDtContacts = functions.region("australia-southeast1")
     .https.onCall(async (data, context) => {
       verifyAuthentication(context);
-      const contactService = initializeContactService();
+      initializeTransferTokenGenerator();
+
+      const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
 
       if (data.userEmail != undefined && data.userEmail == context.auth?.token.email) {
         functions.logger.info(`Retrieving contacts assigned to ${data.userEmail}`);
-        const userService = new UserService(functions.config().dt.baseUrl, transferTokenGenerator.getTransferToken());
+
+        const userService = new UserService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
         const user = await userService.getDTUserByEmail(data.userEmail);
         return contactService.getContactsByPostmanState(resolveEnumByValue(data.ntStatus), user.ID);
       } else {
@@ -26,7 +29,9 @@ export const getDtContacts = functions.region("australia-southeast1")
 export const updateDtPostageStatus = functions.region("australia-southeast1")
     .https.onCall((data, context) => {
       verifyAuthentication(context);
-      const contactService = initializeContactService();
+      initializeTransferTokenGenerator();
+
+      const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
 
       return contactService.updateContactsPostmanState(resolveEnumByValue(data.ntStatus), data.userId);
     });
@@ -49,8 +54,7 @@ function verifyAuthentication(context: CallableContext) {
   functions.logger.info(`Request from ${context.auth.token.email} to ${context.rawRequest.path}`);
 }
 
-function initializeContactService(): ContactService {
+function initializeTransferTokenGenerator() {
   transferTokenGenerator = new TransferTokenGenerator(functions.config().dt.token,
       functions.config().dt.site1, functions.config().dt.site2, dayjs.utc().format("YYYY-MM-DDHH"));
-  return new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
 }
