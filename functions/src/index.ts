@@ -6,13 +6,11 @@ import * as dayjs from "dayjs";
 import {CallableContext} from "firebase-functions/lib/providers/https";
 import {UserService} from "./service/UserService";
 
-let transferTokenGenerator: TransferTokenGenerator;
-
 export const getDtContacts = functions.region("australia-southeast1")
     .https.onCall(async (data, context) => {
       verifyAuthentication(context);
-      initializeTransferTokenGenerator();
 
+      const transferTokenGenerator = initializeTransferTokenGenerator();
       const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
 
       if (data.userEmail != undefined && data.userEmail == context.auth?.token.email) {
@@ -29,8 +27,8 @@ export const getDtContacts = functions.region("australia-southeast1")
 export const updateDtPostageStatus = functions.region("australia-southeast1")
     .https.onCall((data, context) => {
       verifyAuthentication(context);
-      initializeTransferTokenGenerator();
 
+      const transferTokenGenerator = initializeTransferTokenGenerator();
       const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
 
       return contactService.updateContactsPostmanState(resolveEnumByValue(data.ntStatus), data.userId);
@@ -54,7 +52,7 @@ function verifyAuthentication(context: CallableContext) {
   functions.logger.info(`Request from ${context.auth.token.email} to ${context.rawRequest.path}`);
 }
 
-function initializeTransferTokenGenerator() {
-  transferTokenGenerator = new TransferTokenGenerator(functions.config().dt.token,
+function initializeTransferTokenGenerator(): TransferTokenGenerator {
+  return new TransferTokenGenerator(functions.config().dt.token,
       functions.config().dt.site1, functions.config().dt.site2, dayjs.utc().format("YYYY-MM-DDHH"));
 }
