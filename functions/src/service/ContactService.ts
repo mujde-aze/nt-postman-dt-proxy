@@ -2,14 +2,13 @@ import * as axios from "axios";
 import * as functions from "firebase-functions";
 import {Contact} from "../model/Contact";
 import {ContactResponse} from "../model/ContactResponse";
-import {TransferTokenGenerator} from "../model/TransferTokenGenerator";
 import {PostmanState} from "../model/PostmanState";
 
 export class ContactService {
     private contactsPath = "/wp-json/dt-posts/v2/contacts/";
 
     constructor(public readonly baseUrl: string,
-                public readonly tokenGenerator: TransferTokenGenerator) {
+                public readonly transferToken: string) {
     }
 
     async getContactsByPostmanState(postmanState: PostmanState, assignedTo?: string): Promise<Contact[]> {
@@ -26,7 +25,7 @@ export class ContactService {
         response = await axios.default
             .get(requestPath,
                 {
-                  headers: {"Authorization": `Bearer ${this.tokenGenerator.getTransferToken()}`},
+                  headers: {"Authorization": `Bearer ${this.transferToken}`},
                 }
             );
       } catch (error) {
@@ -52,7 +51,7 @@ export class ContactService {
                   "nt_postman_keyselect": postmanState,
                 },
                 {
-                  headers: {"Authorization": `Bearer ${this.tokenGenerator.getTransferToken()}`},
+                  headers: {"Authorization": `Bearer ${this.transferToken}`},
                 }
             );
       } catch (error) {

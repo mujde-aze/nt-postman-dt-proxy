@@ -1,13 +1,12 @@
 import * as axios from "axios";
 import * as functions from "firebase-functions";
-import {TransferTokenGenerator} from "../model/TransferTokenGenerator";
 import {UserResponse} from "../model/UserResponse";
 
 export class UserService {
     private usersPath = "/wp-json/dt/v1/users/get_users";
 
     constructor(public readonly baseUrl: string,
-                public readonly tokenGenerator: TransferTokenGenerator) {
+                public readonly transferToken: string) {
     }
 
     async getDTUserByEmail(userEmail: string): Promise<UserResponse> {
@@ -16,7 +15,7 @@ export class UserService {
         response = await axios.default
             .get(`${this.baseUrl}${this.usersPath}?s=${userEmail}`,
                 {
-                  headers: {"Authorization": `Bearer ${this.tokenGenerator.getTransferToken()}`},
+                  headers: {"Authorization": `Bearer ${this.transferToken}`},
                 }
             );
       } catch (error) {

@@ -15,7 +15,7 @@ export const getDtContacts = functions.region("australia-southeast1")
 
       if (data.userEmail != undefined && data.userEmail == context.auth?.token.email) {
         functions.logger.info(`Retrieving contacts assigned to ${data.userEmail}`);
-        const userService = new UserService(functions.config().dt.baseUrl, transferTokenGenerator);
+        const userService = new UserService(functions.config().dt.baseUrl, transferTokenGenerator.getTransferToken());
         const user = await userService.getDTUserByEmail(data.userEmail);
         return contactService.getContactsByPostmanState(resolveEnumByValue(data.ntStatus), user.ID);
       } else {
@@ -52,5 +52,5 @@ function verifyAuthentication(context: CallableContext) {
 function initializeContactService(): ContactService {
   transferTokenGenerator = new TransferTokenGenerator(functions.config().dt.token,
       functions.config().dt.site1, functions.config().dt.site2, dayjs.utc().format("YYYY-MM-DDHH"));
-  return new ContactService(functions.config().dt.baseurl, transferTokenGenerator);
+  return new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
 }
