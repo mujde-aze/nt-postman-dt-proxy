@@ -12,26 +12,36 @@ export class ContactService {
                 public readonly tokenGenerator: TransferTokenGenerator) {
     }
 
-    async getContactsByPostmanState(postmanState: PostmanState): Promise<Contact[]> {
+    async getContactsByPostmanState(postmanState: PostmanState, assignedTo?: string): Promise<Contact[]> {
+      let response: axios.AxiosResponse;
+      let requestPath: string;
+
+      if (assignedTo) {
+        requestPath = `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}&assigned_to[]=${assignedTo}`;
+      } else {
+        requestPath = `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}`;
+      }
+
       try {
-        const response = await axios.default
-            .get(`${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}`,
+        response = await axios.default
+            .get(requestPath,
                 {
                   headers: {"Authorization": `Bearer ${this.tokenGenerator.getTransferToken()}`},
                 }
             );
-
-        if (response.data.posts.length == 0) {
-          return [];
-        }
-
-        return response.data.posts
-            .map((contactResponse: ContactResponse) => this.transformResponse(contactResponse));
       } catch (error) {
         throw new functions.https.HttpsError("internal",
             "Problem retrieving contacts",
             error);
       }
+
+      if (response.data.posts.length == 0) {
+        throw new functions.https.HttpsError("not-found",
+            `No contacts in the state ${postmanState}`);
+      }
+
+      return response.data.posts
+          .map((contactResponse: ContactResponse) => this.transformResponse(contactResponse));
     }
 
     async updateContactsPostmanState(postmanState: PostmanState, userId: number): Promise<void> {
