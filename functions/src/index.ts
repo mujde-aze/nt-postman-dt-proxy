@@ -13,11 +13,11 @@ export const getDtContacts = functions.region("australia-southeast1")
       const transferTokenGenerator = initializeTransferTokenGenerator();
       const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
 
-      if (data.userEmail != undefined && data.userEmail == context.auth?.token.email) {
-        functions.logger.info(`Retrieving contacts assigned to ${data.userEmail}`);
+      if (data.assignedToMe && context.auth?.token.email) {
+        functions.logger.info(`Retrieving contacts assigned to ${context.auth?.token.email}`);
 
         const userService = new UserService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
-        const user = await userService.getDTUserByEmail(data.userEmail);
+        const user = await userService.getDTUserByEmail(context.auth?.token.email);
         return contactService.getContactsByPostmanState(resolveEnumByValue(data.ntStatus), user.ID);
       } else {
         return contactService.getContactsByPostmanState(resolveEnumByValue(data.ntStatus));

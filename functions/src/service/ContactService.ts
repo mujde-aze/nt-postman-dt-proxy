@@ -66,7 +66,7 @@ export class ContactService {
       return {
         id: contactResponse.ID,
         name: contactResponse.post_title,
-        contactAddresses: contactResponse.contact_address,
+        address: contactResponse.contact_address[0].value,
       };
     }
 }
