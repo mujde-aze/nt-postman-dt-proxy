@@ -67,6 +67,7 @@ export class ContactService {
         id: contactResponse.ID,
         name: contactResponse.post_title,
         address: contactResponse.contact_address[0].value,
+        phone: contactResponse.contact_phone[0].value,
       };
     }
 }
