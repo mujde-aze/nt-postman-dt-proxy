@@ -7,7 +7,7 @@ export enum PostmanState {
     RECEIVED = "nt_received",
 }
 
-export function resolveEnumByValue(value: string): PostmanState {
+export function resolvePostmanStateByValue(value: string): PostmanState {
   switch (value) {
     case "none":
       return PostmanState.NONE;

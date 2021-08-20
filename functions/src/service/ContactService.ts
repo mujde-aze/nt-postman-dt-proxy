@@ -3,6 +3,7 @@ import * as functions from "firebase-functions";
 import {Contact} from "../model/Contact";
 import {ContactResponse} from "../model/ContactResponse";
 import {PostmanState} from "../model/PostmanState";
+import {FaithMilestone} from "../model/FaithMilestone";
 
 export class ContactService {
     private contactsPath = "/wp-json/dt-posts/v2/contacts/";
@@ -50,6 +51,28 @@ export class ContactService {
       } catch (error) {
         throw new functions.https.HttpsError("internal",
             `Problem updating contact with ${postmanState} for user ${userId}`,
+            error);
+      }
+    }
+
+    async updateContactsFaithMilestone(faithMileStone: FaithMilestone, userId: number): Promise<void> {
+      try {
+        await axios.default
+            .post(`${this.baseUrl}${this.contactsPath}${userId}`,
+                {
+                  "milestones":
+                            {
+                              "values": [
+                                {"value": faithMileStone},
+                              ],
+                            },
+                }, {
+                  headers: {"Authorization": `Bearer ${this.transferToken}`},
+                }
+            );
+      } catch (error) {
+        throw new functions.https.HttpsError("internal",
+            `Problem updating contact with ${faithMileStone} for user ${userId}`,
             error);
       }
     }

@@ -1,10 +1,11 @@
 import * as functions from "firebase-functions";
 import {TransferTokenGenerator} from "./model/TransferTokenGenerator";
 import {ContactService} from "./service/ContactService";
-import {resolveEnumByValue} from "./model/PostmanState";
+import {resolvePostmanStateByValue} from "./model/PostmanState";
 import * as dayjs from "dayjs";
 import {CallableContext} from "firebase-functions/lib/providers/https";
 import {UserService} from "./service/UserService";
+import {resolveMilestoneByValue} from "./model/FaithMilestone";
 
 export const getDtContacts = functions.region("australia-southeast1")
     .https.onCall(async (data, context) => {
@@ -18,9 +19,9 @@ export const getDtContacts = functions.region("australia-southeast1")
 
         const userService = new UserService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
         const user = await userService.getDTUserByEmail(context.auth?.token.email);
-        return contactService.getContactsByPostmanState(resolveEnumByValue(data.ntStatus), user.ID);
+        return contactService.getContactsByPostmanState(resolvePostmanStateByValue(data.ntStatus), user.ID);
       } else {
-        return contactService.getContactsByPostmanState(resolveEnumByValue(data.ntStatus));
+        return contactService.getContactsByPostmanState(resolvePostmanStateByValue(data.ntStatus));
       }
     });
 
@@ -31,7 +32,17 @@ export const updateDtPostageStatus = functions.region("australia-southeast1")
       const transferTokenGenerator = initializeTransferTokenGenerator();
       const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
 
-      return contactService.updateContactsPostmanState(resolveEnumByValue(data.ntStatus), data.userId);
+      return contactService.updateContactsPostmanState(resolvePostmanStateByValue(data.ntStatus), data.userId);
+    });
+
+export const updateFaithMilestone = functions.region("australia-southeast1")
+    .https.onCall((data, context) => {
+      verifyAuthentication(context);
+
+      const transferTokenGenerator = initializeTransferTokenGenerator();
+      const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
+
+      return contactService.updateContactsFaithMilestone(resolveMilestoneByValue(data.faithMilestone), data.userId);
     });
 
 function verifyAuthentication(context: CallableContext) {
