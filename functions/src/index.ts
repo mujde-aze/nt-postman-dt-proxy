@@ -1,11 +1,11 @@
 import * as functions from "firebase-functions";
 import {TransferTokenGenerator} from "./model/TransferTokenGenerator";
 import {ContactService} from "./service/ContactService";
-import {resolvePostmanStateByValue} from "./model/PostmanState";
+import {PostmanState, resolvePostmanStateByValue} from "./model/PostmanState";
 import * as dayjs from "dayjs";
 import {CallableContext} from "firebase-functions/lib/providers/https";
 import {UserService} from "./service/UserService";
-import {resolveMilestoneByValue} from "./model/FaithMilestone";
+import {FaithMilestone, resolveMilestoneByValue} from "./model/FaithMilestone";
 
 export const getDtContacts = functions.region("australia-southeast1")
     .https.onCall(async (data, context) => {
@@ -31,8 +31,14 @@ export const updateDtPostageStatus = functions.region("australia-southeast1")
 
       const transferTokenGenerator = initializeTransferTokenGenerator();
       const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
+      const postmanState = resolvePostmanStateByValue(data.ntStatus);
+      const updateStateResponse = contactService.updateContactsPostmanState(postmanState, data.userId);
 
-      return contactService.updateContactsPostmanState(resolvePostmanStateByValue(data.ntStatus), data.userId);
+      if (postmanState === PostmanState.RECEIVED) {
+        return contactService.updateContactsFaithMilestone(FaithMilestone.HAS_BIBLE, data.userId);
+      }
+
+      return updateStateResponse;
     });
 
 export const updateFaithMilestone = functions.region("australia-southeast1")
