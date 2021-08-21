@@ -34,7 +34,7 @@ export const updateDtPostageStatus = functions.region("australia-southeast1")
       const postmanState = resolvePostmanStateByValue(data.ntStatus);
       const updateStateResponse = contactService.updateContactsPostmanState(postmanState, data.userId);
 
-      if (postmanState === PostmanState.RECEIVED) {
+      if (postmanState === PostmanState.SENT) {
         return contactService.updateContactsFaithMilestone(FaithMilestone.HAS_BIBLE, data.userId);
       }
 
