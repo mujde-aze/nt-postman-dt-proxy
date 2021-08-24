@@ -4,21 +4,21 @@ Proxy requests from the postman view to the DT API.
 
 ## Table of Contents
 
-- [Overview](#markdown-header-overview)
-- [Getting Started](#markdown-header-getting-started)
-    - [Prerequisites](#markdown-header-prerequisites)
-    - [Installing](#markdown-header-installing)
-- [Running the tests](#markdown-header-running-the-tests)
-    - [And coding style tests](#markdown-header-and-coding-style-tests)
-- [Branching Model](#markdown-header-branching-model)
-- [Deployment](#markdown-header-deployment)
-- [Built With](#markdown-header-built-with)
-- [Versioning](#markdown-header-versioning)
-- [Issue Tracking](#markdown-header-issue-tracking)
-- [Documentation](#markdown-header-documentation)
-    - [Project Documentation](#markdown-header-project-documentation)
-    - [Recommended Reading](#markdown-header-recommended-reading)
-- [Authors](#markdown-header-authors)
+- [Overview](#overview)
+- [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installing](#installing)
+- [Running the tests](#running-the-tests)
+    - [And coding style tests](#and-coding-style-tests)
+- [Branching Model](#branching-model)
+- [Deployment](#deployment)
+- [Built With](#built-with)
+- [Versioning](#versioning)
+- [Issue Tracking](#issue-tracking)
+- [Documentation](#documentation)
+    - [Project Documentation](#project-documentation)
+    - [Recommended Reading](#recommended-reading)
+- [Authors](#authors)
 
 ## Overview
 
