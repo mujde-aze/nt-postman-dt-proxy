@@ -14,7 +14,7 @@ export const getDtContacts = functions.region("australia-southeast1")
       const transferTokenGenerator = initializeTransferTokenGenerator();
       const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
 
-      if (data.assignedToMe && context.auth?.token.email) {
+      if (context.auth?.token.email && !shouldViewAllContacts(context.auth?.token.email)) {
         functions.logger.info(`Retrieving contacts assigned to ${context.auth?.token.email}`);
 
         const userService = new UserService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
@@ -72,4 +72,9 @@ function verifyAuthentication(context: CallableContext) {
 function initializeTransferTokenGenerator(): TransferTokenGenerator {
   return new TransferTokenGenerator(functions.config().dt.token,
       functions.config().dt.site1, functions.config().dt.site2, dayjs.utc().format("YYYY-MM-DDHH"));
+}
+
+function shouldViewAllContacts(email: string) {
+  const emailWhiteList = ["ramil.qurbanov.651.19@gmail.com", "benmclure@gmail.com"];
+  return emailWhiteList.includes(email);
 }
