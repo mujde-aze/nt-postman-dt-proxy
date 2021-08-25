@@ -21,6 +21,7 @@ export const getDtContacts = functions.region("australia-southeast1")
         const user = await userService.getDTUserByEmail(context.auth?.token.email);
         return contactService.getContactsByPostmanState(resolvePostmanStateByValue(data.ntStatus), user.ID);
       } else {
+        functions.logger.info(`${context.auth?.token.email} is in whitelist, retrieving all contacts for supplied status`);
         return contactService.getContactsByPostmanState(resolvePostmanStateByValue(data.ntStatus));
       }
     });
@@ -75,6 +76,6 @@ function initializeTransferTokenGenerator(): TransferTokenGenerator {
 }
 
 function shouldViewAllContacts(email: string) {
-  const emailWhiteList = ["ramil.qurbanov.651.19@gmail.com", "benmclure@gmail.com"];
+  const emailWhiteList = functions.config().dt.emailwhitelist.split(",");
   return emailWhiteList.includes(email);
 }
