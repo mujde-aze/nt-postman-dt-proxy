@@ -1,9 +1,9 @@
 import * as axios from "axios";
 import * as functions from "firebase-functions";
-import {Contact} from "../model/Contact";
 import {ContactResponse} from "../model/ContactResponse";
 import {PostmanState} from "../model/PostmanState";
 import {FaithMilestone} from "../model/FaithMilestone";
+import {ActivityResponse} from "../model/ActivityResponse";
 
 export class ContactService {
     private contactsPath = "/wp-json/dt-posts/v2/contacts/";
@@ -12,7 +12,7 @@ export class ContactService {
                 public readonly transferToken: string) {
     }
 
-    async getContactsByPostmanState(postmanState: PostmanState, assignedTo?: string): Promise<Contact[]> {
+    async getContactsByPostmanState(postmanState: PostmanState, assignedTo?: string): Promise<ContactResponse[]> {
       let response: axios.AxiosResponse;
 
       try {
@@ -33,8 +33,7 @@ export class ContactService {
             `No contacts in the state ${postmanState}`);
       }
 
-      return response.data.posts
-          .map((contactResponse: ContactResponse) => this.transformResponse(contactResponse));
+      return response.data.posts as ContactResponse[];
     }
 
     async updateContactsPostmanState(postmanState: PostmanState, userId: number): Promise<void> {
@@ -77,20 +76,29 @@ export class ContactService {
       }
     }
 
+    async getContactActivities(userId: string): Promise<ActivityResponse[]> {
+      let response: axios.AxiosResponse;
+
+      try {
+        response = await axios.default
+            .get(`${this.baseUrl}${this.contactsPath}${userId}/activity`,
+                {
+                  headers: {"Authorization": `Bearer ${this.transferToken}`},
+                });
+      } catch (error) {
+        throw new functions.https.HttpsError("internal",
+            "Problem retrieving contact activity",
+            error);
+      }
+
+      return response.data.activity;
+    }
+
     private getRequestPath(postmanState: PostmanState, assignedTo?: string): string {
       if (assignedTo) {
         return `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}&assigned_to[]=${assignedTo}`;
       } else {
         return `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}`;
       }
-    }
-
-    private transformResponse(contactResponse: ContactResponse): Contact {
-      return {
-        id: contactResponse.ID,
-        name: contactResponse.post_title,
-        address: contactResponse.contact_address[0].value,
-        phone: contactResponse.contact_phone[0].value,
-      };
     }
 }

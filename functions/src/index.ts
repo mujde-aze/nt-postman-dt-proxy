@@ -6,6 +6,7 @@ import * as dayjs from "dayjs";
 import {CallableContext} from "firebase-functions/lib/providers/https";
 import {UserService} from "./service/UserService";
 import {FaithMilestone, resolveMilestoneByValue} from "./model/FaithMilestone";
+import {ContactResponseTransformer} from "./service/ContactResponseTransformer";
 
 export const getDtContacts = functions.region("australia-southeast1")
     .https.onCall(async (data, context) => {
@@ -14,16 +15,19 @@ export const getDtContacts = functions.region("australia-southeast1")
       const transferTokenGenerator = initializeTransferTokenGenerator();
       const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
 
+      let userId = undefined;
       if (context.auth?.token.email && !shouldViewAllContacts(context.auth?.token.email)) {
         functions.logger.info(`Retrieving contacts assigned to ${context.auth?.token.email}`);
 
         const userService = new UserService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
         const user = await userService.getDTUserByEmail(context.auth?.token.email);
-        return contactService.getContactsByPostmanState(resolvePostmanStateByValue(data.ntStatus), user.ID);
+        userId = user.ID;
       } else {
         functions.logger.info(`${context.auth?.token.email} is in whitelist, retrieving all contacts for supplied status`);
-        return contactService.getContactsByPostmanState(resolvePostmanStateByValue(data.ntStatus));
       }
+
+      const contactResponses = await contactService.getContactsByPostmanState(resolvePostmanStateByValue(data.ntStatus), userId);
+      return ContactResponseTransformer.transformResponses(contactResponses, contactService);
     });
 
 export const updateDtPostageStatus = functions.region("australia-southeast1")
@@ -53,12 +57,12 @@ export const updateFaithMilestone = functions.region("australia-southeast1")
     });
 
 function verifyAuthentication(context: CallableContext) {
-  if (context.app == undefined) {
+/*  if (context.app == undefined) {
     throw new functions.https.HttpsError(
         "failed-precondition",
         "The function must be called from a verified app."
     );
-  }
+  }*/
 
   if (context.auth == undefined) {
     throw new functions.https.HttpsError(
