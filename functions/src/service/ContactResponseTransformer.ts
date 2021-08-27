@@ -22,11 +22,11 @@ export class ContactResponseTransformer {
       name: contactResponse.post_title,
       address: contactResponse.contact_address[0].value,
       phone: contactResponse.contact_phone[0].value,
-      dateRequested: needNtModifiedDate,
+      dateRequested: needNtModifiedDate !== undefined ? dayjs.unix(needNtModifiedDate).toString() : undefined,
     };
   }
 
-  private static getNeedNtModifiedDate(activities: ActivityResponse[]): string | undefined {
+  private static getNeedNtModifiedDate(activities: ActivityResponse[]): number | undefined {
     const needNtActivity = activities
         .filter((activity) => activity.meta_key === "nt_postman_keyselect" &&
             activity.object_note.includes("Needs NT Posted"));
@@ -37,11 +37,9 @@ export class ContactResponseTransformer {
 
     if (needNtActivity.length > 1) {
       const modifiedTimes = needNtActivity.map((activity) => parseInt(activity.hist_time));
-      const mostRecentModification = Math.max(...modifiedTimes);
-      return dayjs.unix(mostRecentModification).toString();
+      return Math.max(...modifiedTimes);
     }
 
-    const modifiedTime = parseInt(needNtActivity[0].hist_time);
-    return dayjs.unix(modifiedTime).toString();
+    return parseInt(needNtActivity[0].hist_time);
   }
 }

@@ -57,12 +57,12 @@ export const updateFaithMilestone = functions.region("australia-southeast1")
     });
 
 function verifyAuthentication(context: CallableContext) {
-/*  if (context.app == undefined) {
+  if (context.app == undefined) {
     throw new functions.https.HttpsError(
         "failed-precondition",
         "The function must be called from a verified app."
     );
-  }*/
+  }
 
   if (context.auth == undefined) {
     throw new functions.https.HttpsError(
