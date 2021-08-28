@@ -5,7 +5,7 @@ import {PostmanState, resolvePostmanStateByValue} from "./model/PostmanState";
 import * as dayjs from "dayjs";
 import {CallableContext} from "firebase-functions/lib/providers/https";
 import {UserService} from "./service/UserService";
-import {FaithMilestone, resolveMilestoneByValue} from "./model/FaithMilestone";
+import {FaithMilestone} from "./model/FaithMilestone";
 import {ContactResponseTransformer} from "./service/ContactResponseTransformer";
 
 export const getDtContacts = functions.region("australia-southeast1")
@@ -44,16 +44,6 @@ export const updateDtPostageStatus = functions.region("australia-southeast1")
       }
 
       return updateStateResponse;
-    });
-
-export const updateFaithMilestone = functions.region("australia-southeast1")
-    .https.onCall((data, context) => {
-      verifyAuthentication(context);
-
-      const transferTokenGenerator = initializeTransferTokenGenerator();
-      const contactService = new ContactService(functions.config().dt.baseurl, transferTokenGenerator.getTransferToken());
-
-      return contactService.updateContactsFaithMilestone(resolveMilestoneByValue(data.faithMilestone), data.userId);
     });
 
 function verifyAuthentication(context: CallableContext) {

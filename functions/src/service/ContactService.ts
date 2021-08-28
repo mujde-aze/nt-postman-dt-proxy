@@ -32,8 +32,10 @@ export class ContactService {
         throw new functions.https.HttpsError("not-found",
             `No contacts in the state ${postmanState}`);
       }
+      const contactResponses: ContactResponse[] = response.data.posts;
+      functions.logger.debug(`Retrieved a total of ${contactResponses.length} contacts in getContactsByPostmanState for the state ${postmanState}.`);
 
-      return response.data.posts as ContactResponse[];
+      return contactResponses;
     }
 
     async updateContactsPostmanState(postmanState: PostmanState, userId: number): Promise<void> {
@@ -52,6 +54,8 @@ export class ContactService {
             `Problem updating contact with ${postmanState} for user ${userId}`,
             error);
       }
+
+      functions.logger.debug(`Finished updating postman state of user ${userId} in updateContactsPostmanState.`);
     }
 
     async updateContactsFaithMilestone(faithMileStone: FaithMilestone, userId: number): Promise<void> {
@@ -90,8 +94,10 @@ export class ContactService {
             "Problem retrieving contact activity",
             error);
       }
+      const activityResponse: ActivityResponse[] = response.data.activity;
+      functions.logger.debug(`Retrieved a total of ${activityResponse.length} activities in getContactActivities for user ${userId}.`);
 
-      return response.data.activity;
+      return activityResponse;
     }
 
     private getRequestPath(postmanState: PostmanState, assignedTo?: string): string {

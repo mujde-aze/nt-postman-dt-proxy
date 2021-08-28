@@ -1,4 +1,4 @@
-# NT Postman Proxy
+# NT Postman - DT Proxy
 
 Proxy requests from the postman view to the DT API.
 
