@@ -1,4 +1,4 @@
-import * as axios from "axios";
+import axios from "axios";
 import * as functions from "firebase-functions";
 import {UserResponse} from "../model/UserResponse";
 
@@ -10,9 +10,9 @@ export class UserService {
     }
 
     async getDTUserByEmail(userEmail: string): Promise<UserResponse> {
-      let response: axios.AxiosResponse;
+      let response;
       try {
-        response = await axios.default
+        response = await axios
             .get(`${this.baseUrl}${this.usersPath}?s=${userEmail}`,
                 {
                   headers: {"Authorization": `Bearer ${this.transferToken}`},

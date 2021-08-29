@@ -1,4 +1,4 @@
-import * as axios from "axios";
+import axios from "axios";
 import * as functions from "firebase-functions";
 import {ContactResponse} from "../model/ContactResponse";
 import {PostmanState} from "../model/PostmanState";
@@ -13,10 +13,10 @@ export class ContactService {
     }
 
     async getContactsByPostmanState(postmanState: PostmanState, assignedTo?: string): Promise<ContactResponse[]> {
-      let response: axios.AxiosResponse;
+      let response;
 
       try {
-        response = await axios.default
+        response = await axios
             .get(this.getRequestPath(postmanState, assignedTo),
                 {
                   headers: {"Authorization": `Bearer ${this.transferToken}`},
@@ -40,7 +40,7 @@ export class ContactService {
 
     async updateContactsPostmanState(postmanState: PostmanState, userId: number): Promise<void> {
       try {
-        await axios.default
+        await axios
             .post(`${this.baseUrl}${this.contactsPath}${userId}`,
                 {
                   "nt_postman_keyselect": postmanState,
@@ -60,7 +60,7 @@ export class ContactService {
 
     async updateContactsFaithMilestone(faithMileStone: FaithMilestone, userId: number): Promise<void> {
       try {
-        await axios.default
+        await axios
             .post(`${this.baseUrl}${this.contactsPath}${userId}`,
                 {
                   "milestones":
@@ -81,23 +81,22 @@ export class ContactService {
     }
 
     async getContactActivities(userId: string): Promise<ActivityResponse[]> {
-      let response: axios.AxiosResponse;
-
       try {
-        response = await axios.default
+        const {data} = await axios
             .get(`${this.baseUrl}${this.contactsPath}${userId}/activity`,
                 {
                   headers: {"Authorization": `Bearer ${this.transferToken}`},
                 });
+
+        const activityResponse: ActivityResponse[] = data.activity;
+        functions.logger.debug(`Retrieved a total of ${activityResponse.length} activities in getContactActivities for user ${userId}.`);
+
+        return activityResponse;
       } catch (error) {
         throw new functions.https.HttpsError("internal",
             "Problem retrieving contact activity",
             error);
       }
-      const activityResponse: ActivityResponse[] = response.data.activity;
-      functions.logger.debug(`Retrieved a total of ${activityResponse.length} activities in getContactActivities for user ${userId}.`);
-
-      return activityResponse;
     }
 
     private getRequestPath(postmanState: PostmanState, assignedTo?: string): string {

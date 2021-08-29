@@ -7,20 +7,18 @@ import * as functions from "firebase-functions";
 
 export class ContactResponseTransformer {
   static async transformResponses(contactResponses: ContactResponse[], contactService: ContactService): Promise<Contact[]> {
-    const contacts: Contact[] = [];
     functions.logger.debug(`Initiated transformation of ${contactResponses.length} contacts.`);
 
-    for (const contactResponse of contactResponses) {
-      const activities = await contactService.getContactActivities(contactResponse.ID);
-      contacts.push(ContactResponseTransformer.transformResponse(contactResponse, activities));
-    }
-
+    const contacts: Contact[] = await Promise.all(
+        contactResponses.map((contactResponse) => ContactResponseTransformer.transformResponse(contactResponse, contactService))
+    );
     functions.logger.debug(`Completed transformation of ${contactResponses.length} contacts.`);
 
     return contacts;
   }
 
-  static transformResponse(contactResponse: ContactResponse, activities: ActivityResponse[]): Contact {
+  private static async transformResponse(contactResponse: ContactResponse, contactService: ContactService): Promise<Contact> {
+    const activities = await contactService.getContactActivities(contactResponse.ID);
     const needNtModifiedDate = ContactResponseTransformer.getNeedNtModifiedDate(activities);
     return {
       id: contactResponse.ID,
