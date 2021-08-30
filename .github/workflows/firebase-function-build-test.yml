@@ -1,6 +1,8 @@
 name: Build firebase function
 
 on:
+  schedule:
+    - cron: '5 4 * * 4'
   push:
     branches: [ feature/**, master ]
 
@@ -10,7 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build and test
+      - name: Test
         run: |
-          cd functions
-          npm ci && npm run lint && npm run build && npm run test
+        cd functions
+        npm ci && npm audit --audit-level=high && npm run lint && npm run test
+
+      - name: Build
+        run: |
+        cd functions
+        npm run build
