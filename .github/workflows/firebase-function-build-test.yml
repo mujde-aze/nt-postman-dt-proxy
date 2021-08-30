@@ -18,6 +18,4 @@ jobs:
         npm ci && npm audit --audit-level=high && npm run lint && npm run test
 
       - name: Build
-        run: |
-        cd functions
-        npm run build
+        run: npm run build
