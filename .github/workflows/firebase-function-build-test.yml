@@ -15,7 +15,7 @@ jobs:
       - name: Test
         run: |
           cd functions
-          npm ci && npm audit --audit-level=high && npm run lint && npm run test
+          npm ci && npm run lint && npm run test
 
       - name: Build
         run: |
