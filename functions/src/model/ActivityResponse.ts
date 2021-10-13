@@ -1,3 +1,7 @@
+export interface DTActivityResponse {
+    activity: ActivityResponse[]
+}
+
 export interface ActivityResponse {
     // eslint-disable-next-line camelcase
     meta_key: string;

@@ -1,3 +1,7 @@
+export interface DTPostResponse {
+    posts: ContactResponse[]
+}
+
 export interface ContactResponse {
     ID: string;
     // eslint-disable-next-line camelcase
