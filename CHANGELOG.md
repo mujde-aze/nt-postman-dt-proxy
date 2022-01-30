@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.5] - 2022-01-30
 
 ## Fixed
-- Issue with import vs require
+- Batch promises when retrieving contacts
 
 ## [1.4.4] - 2022-01-30
 

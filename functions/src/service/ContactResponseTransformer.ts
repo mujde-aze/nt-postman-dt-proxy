@@ -4,17 +4,19 @@ import {ContactResponse} from "../model/ContactResponse";
 import {Contact} from "../model/Contact";
 import {ContactService} from "./ContactService";
 import * as functions from "firebase-functions";
-import pLimit from "p-limit";
 
 export class ContactResponseTransformer {
   static async transformResponses(contactResponses: ContactResponse[], contactService: ContactService): Promise<Contact[]> {
     functions.logger.debug(`Initiated transformation of ${contactResponses.length} contacts.`);
 
-    const concurrencyLimit = pLimit(10);
     const contactPromises = contactResponses.map((contactResponse) =>
-      concurrencyLimit(() => ContactResponseTransformer.transformResponse(contactResponse, contactService)));
+      ContactResponseTransformer.transformResponse(contactResponse, contactService));
 
-    const contacts: Contact[] = await Promise.all(contactPromises);
+    const contacts: Contact[] = [];
+    while (contactPromises.length > 0) {
+      const contactsBatch = await Promise.all(contactPromises.splice(0, 9));
+      contacts.concat(contactsBatch);
+    }
     functions.logger.debug(`Completed transformation of ${contactResponses.length} contacts.`);
 
     return contacts;
