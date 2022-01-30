@@ -12,11 +12,7 @@ export class ContactResponseTransformer {
     const contactPromises = contactResponses.map((contactResponse) =>
       ContactResponseTransformer.transformResponse(contactResponse, contactService));
 
-    let contacts: Contact[] = [];
-    while (contactPromises.length > 0) {
-      const contactsBatch = await Promise.all(contactPromises.splice(0, 4));
-      contacts = contacts.concat(contactsBatch);
-    }
+    const contacts = await Promise.all(contactPromises);
     functions.logger.debug(`Completed transformation of ${contactResponses.length} contacts.`);
 
     return contacts;
