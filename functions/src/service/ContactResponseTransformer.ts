@@ -14,7 +14,7 @@ export class ContactResponseTransformer {
 
     let contacts: Contact[] = [];
     while (contactPromises.length > 0) {
-      const contactsBatch = await Promise.all(contactPromises.splice(0, 9));
+      const contactsBatch = await Promise.all(contactPromises.splice(0, 4));
       contacts = contacts.concat(contactsBatch);
     }
     functions.logger.debug(`Completed transformation of ${contactResponses.length} contacts.`);
