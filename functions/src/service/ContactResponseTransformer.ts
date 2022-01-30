@@ -23,8 +23,8 @@ export class ContactResponseTransformer {
     return {
       id: contactResponse.ID,
       name: contactResponse.post_title,
-      address: contactResponse.contact_address[0].value,
-      phone: contactResponse.contact_phone[0].value,
+      address: contactResponse.contact_address.length > 0 ? contactResponse.contact_address[0].value : "",
+      phone: contactResponse.contact_phone.length > 0 ? contactResponse.contact_phone[0].value : "",
       dateRequested: needNtModifiedDate !== undefined ? dayjs.unix(needNtModifiedDate).toString() : undefined,
     };
   }
