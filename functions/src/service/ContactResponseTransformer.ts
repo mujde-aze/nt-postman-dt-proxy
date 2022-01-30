@@ -9,10 +9,12 @@ export class ContactResponseTransformer {
   static async transformResponses(contactResponses: ContactResponse[], contactService: ContactService): Promise<Contact[]> {
     functions.logger.debug(`Initiated transformation of ${contactResponses.length} contacts.`);
 
-    const contactPromises = contactResponses.map((contactResponse) =>
-      ContactResponseTransformer.transformResponse(contactResponse, contactService));
+    const contacts: Contact[] = [];
+    for (const contactResponse of contactResponses) {
+      const transformedContact = await ContactResponseTransformer.transformResponse(contactResponse, contactService);
+      contacts.push(transformedContact);
+    }
 
-    const contacts = await Promise.all(contactPromises);
     functions.logger.debug(`Completed transformation of ${contactResponses.length} contacts.`);
 
     return contacts;
