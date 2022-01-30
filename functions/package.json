@@ -15,7 +15,6 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@types/axios": "^0.14.0",
     "@types/crypto-js": "^4.1.0",
     "axios": "^0.25.0",
     "crypto-js": "^4.1.1",
