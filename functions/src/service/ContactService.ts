@@ -94,6 +94,7 @@ export class ContactService {
 
       return activityResponse;
     } catch (error) {
+      functions.logger.error(`Problem retrieving contact activity ${JSON.stringify(error)}`);
       throw new functions.https.HttpsError("internal",
           "Problem retrieving contact activity",
           error);
