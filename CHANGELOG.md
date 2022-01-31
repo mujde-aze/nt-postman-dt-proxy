@@ -99,6 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Check authentication attributes before interacting with API.
 
 
+[1.4.9]: https://github.com/mujde-aze/nt-postman-dt-proxy/compare/v1.4.8...v1.4.9
 [1.4.8]: https://github.com/mujde-aze/nt-postman-dt-proxy/compare/v1.4.5...v1.4.8
 [1.4.5]: https://github.com/mujde-aze/nt-postman-dt-proxy/compare/v1.4.4...v1.4.5
 [1.4.4]: https://github.com/mujde-aze/nt-postman-dt-proxy/compare/v1.4.3...v1.4.4
