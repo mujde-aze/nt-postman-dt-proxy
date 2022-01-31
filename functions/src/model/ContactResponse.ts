@@ -10,6 +10,7 @@ export interface ContactResponse {
     contact_address: ContactAddress[];
     // eslint-disable-next-line camelcase
     contact_phone: ContactPhone[];
+    last_modified: LastModified;
 }
 
 export interface ContactPhone {
@@ -20,4 +21,9 @@ export interface ContactPhone {
 export interface ContactAddress {
     verified: boolean;
     value: string;
+}
+
+export interface LastModified {
+    timestamp: number;
+    formatted: string;
 }

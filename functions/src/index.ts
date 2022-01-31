@@ -27,7 +27,7 @@ export const getDtContacts = functions.region("australia-southeast1")
       }
 
       const contactResponses = await contactService.getContactsByPostmanState(resolvePostmanStateByValue(data.ntStatus), userId);
-      return ContactResponseTransformer.transformResponses(contactResponses, contactService);
+      return ContactResponseTransformer.transformResponses(contactResponses);
     });
 
 export const updateDtPostageStatus = functions.region("australia-southeast1")
