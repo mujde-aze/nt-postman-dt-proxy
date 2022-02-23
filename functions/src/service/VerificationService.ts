@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
-import * as _ from "lodash/fp";
 import {CallableContext} from "firebase-functions/lib/providers/https";
+import _ = require("lodash");
 
 /**
  * Ensures users are making calls from authenticated apps, and also that the
