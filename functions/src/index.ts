@@ -43,7 +43,6 @@ export const updateDtPostageStatus = functions.region("australia-southeast1")
       await contactService.updateContactsPostmanState(postmanState, data.userId);
 
       if (postmanState === PostmanState.SENT) {
-        // TODO: update custom field with tracking number
         await contactService.updateContactsFaithMilestone(FaithMilestone.HAS_BIBLE, data.userId);
         const sms = smsBuilder(data.phone, data.name, data.trackingNumber);
         await sendSMS(sms);
