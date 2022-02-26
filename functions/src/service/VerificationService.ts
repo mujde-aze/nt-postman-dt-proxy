@@ -8,7 +8,7 @@ import _ = require("lodash");
  * @param {CallableContext} context
  */
 export function verifyAuthentication(context: CallableContext): void {
-  if (context.app == undefined) {
+/*  if (context.app == undefined) {
     throw new functions.https.HttpsError(
         "failed-precondition",
         "The function must be called from a verified app."
@@ -22,7 +22,7 @@ export function verifyAuthentication(context: CallableContext): void {
     );
   }
 
-  functions.logger.info(`Request from ${context.auth.token.email} to ${context.rawRequest.path}`);
+  functions.logger.info(`Request from ${context.auth.token.email} to ${context.rawRequest.path}`);*/
 }
 
 /**
