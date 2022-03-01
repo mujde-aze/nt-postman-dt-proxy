@@ -51,6 +51,7 @@ export function smsBuilder(phone: string, name: string, trackingNumber: string):
 
   return {
     to: phone,
+    name: name,
     body: message,
   };
 }
