@@ -3,6 +3,7 @@ import * as twilio from "twilio";
 import {SMS} from "../model/SMS";
 import {FieldValue, firestore} from "../FirebaseAdmin";
 import * as crypto from "crypto";
+import {SMSRecord} from "../model/SMSRecord";
 
 const MAX_SEND = 2;
 
@@ -13,9 +14,9 @@ const client = twilio(accountSid, accountToken);
 
 export async function sendSMS(sms: SMS): Promise<void> {
   const messageHash = hashSms(sms);
-  const sentCount = await getMessageSentCount(messageHash);
+  const smsRecord = await getExistingSMSRecord(messageHash);
 
-  if (sentCount >= MAX_SEND) {
+  if (smsRecord.count >= MAX_SEND) {
     throw new functions.https.HttpsError("resource-exhausted", `Exceeded the maximum number of messages you can send to ${sms.to}`);
   }
 
@@ -31,7 +32,12 @@ export async function sendSMS(sms: SMS): Promise<void> {
     throw new functions.https.HttpsError("internal", "Failed to send SMS", error);
   }
 
-  await storeMessageDetails(messageHash, sentCount);
+  if (smsRecord.id === "") {
+    await addNewSMSRecord(smsRecord);
+    return;
+  }
+
+  await updateExistingSMSRecord(smsRecord);
 }
 
 export function smsBuilder(phone: string, name: string, trackingNumber: string): SMS {
@@ -40,7 +46,7 @@ export function smsBuilder(phone: string, name: string, trackingNumber: string):
 
   if (trackingNumber === "" || trackingNumber === undefined) {
     message = "Salam! Sizə İsanın Həyatı səhifəsindən kitabınız göndərildi. \n" +
-        "Yaxın vaxtda poçtdan sizə xəbər gəlməsə bu nömrə ilə əlaqə saxlayın.";
+            "Yaxın vaxtda poçtdan sizə xəbər gəlməsə bu nömrə ilə əlaqə saxlayın.";
   }
 
   return {
@@ -55,31 +61,48 @@ function hashSms(sms: SMS): string {
       .digest("hex");
 }
 
-async function getMessageSentCount(messageHash: string): Promise<number> {
+async function getExistingSMSRecord(messageHash: string): Promise<SMSRecord> {
   const messageDetailsRef = await firestore.collection("MessageDetails")
       .where("messageHash", "==", messageHash)
       .get();
 
   if (messageDetailsRef.empty) {
-    return 0;
+    return {
+      id: "",
+      count: 0,
+      messageHash: messageHash,
+    };
   }
 
-  return messageDetailsRef.docs[0].data().sentCount;
+  return {
+    id: messageDetailsRef.docs[0].id,
+    count: messageDetailsRef.docs[0].data().sentCount,
+    messageHash: messageDetailsRef.docs[0].data().messageHash,
+  };
 }
 
-async function storeMessageDetails(messageHash: string, sentCount: number): Promise<void> {
+async function addNewSMSRecord(smsRecord: SMSRecord): Promise<void> {
   const storedDetails = await firestore.collection("MessageDetails")
       .add({
-        messageHash: messageHash,
-        sentCount: sentCount,
+        messageHash: smsRecord.messageHash,
+        sentCount: smsRecord.count,
         created: FieldValue.serverTimestamp(),
         updated: FieldValue.serverTimestamp(),
       });
-  await updateMessageSentCount(storedDetails.id);
+  await updateSMSRecordCount(storedDetails.id);
 }
 
-async function updateMessageSentCount(messageId: string): Promise<void> {
+async function updateSMSRecordCount(messageId: string): Promise<void> {
   await firestore.collection("MessageDetails").doc(messageId)
+      .update({
+        sentCount: FieldValue.increment(1),
+        updated: FieldValue.serverTimestamp(),
+      });
+}
+
+async function updateExistingSMSRecord(smsRecord: SMSRecord): Promise<void> {
+  await firestore.collection("MessageDetails")
+      .doc(smsRecord.id)
       .update({
         sentCount: FieldValue.increment(1),
         updated: FieldValue.serverTimestamp(),
