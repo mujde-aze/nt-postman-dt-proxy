@@ -35,9 +35,17 @@ export async function sendSMS(sms: SMS): Promise<void> {
 }
 
 export function smsBuilder(phone: string, name: string, trackingNumber: string): SMS {
+  let message = `Salam! Sizə İsanın Həyatı səhifəsindən kitabınız göndərildi. 
+  Poçt izləmə kodunuz ${trackingNumber} www.azerpost.az/az/tracking Linkə vur, İncilin haradadır bax!`;
+
+  if (trackingNumber === "" || trackingNumber === undefined) {
+    message = "Salam! Sizə İsanın Həyatı səhifəsindən kitabınız göndərildi. \n" +
+        "Yaxın vaxtda poçtdan sizə xəbər gəlməsə bu nömrə ilə əlaqə saxlayın.";
+  }
+
   return {
     to: phone,
-    body: `Hi ${name}, your NT has been sent. The tracking number is ${trackingNumber}.`,
+    body: message,
   };
 }
 
