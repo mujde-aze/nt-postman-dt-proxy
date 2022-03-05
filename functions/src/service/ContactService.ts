@@ -14,7 +14,6 @@ export class ContactService {
 
   async getContactsByPostmanState(postmanState: PostmanState, assignedTo?: string): Promise<ContactResponse[]> {
     let response;
-
     try {
       response = await axios
           .get<DTPostResponse>(this.getRequestPath(postmanState, assignedTo),
@@ -102,10 +101,17 @@ export class ContactService {
   }
 
   private getRequestPath(postmanState: PostmanState, assignedTo?: string): string {
-    if (assignedTo) {
-      return `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}&assigned_to[]=${assignedTo}`;
-    } else {
-      return `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}`;
+    let resultConstraints = "&sort=last_modified";
+    if (postmanState === PostmanState.SENT) {
+      resultConstraints = "&sort=-last_modified&limit=20";
     }
+
+    const requestPath = `${this.baseUrl}${(this.contactsPath)}?nt_postman_keyselect[]=${postmanState}${resultConstraints}`;
+
+    if (assignedTo) {
+      return `${requestPath}&assigned_to[]=${assignedTo}`;
+    }
+
+    return requestPath;
   }
 }
