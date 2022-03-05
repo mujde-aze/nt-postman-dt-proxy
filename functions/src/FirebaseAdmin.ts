@@ -5,4 +5,6 @@ const firestore = admin.firestore();
 firestore.settings({ignoreUndefinedProperties: true});
 const FieldValue = admin.firestore.FieldValue;
 
-export {firestore, FieldValue};
+const remoteConfig = admin.remoteConfig();
+
+export {firestore, FieldValue, remoteConfig};
