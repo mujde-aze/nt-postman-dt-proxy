@@ -24,6 +24,7 @@ export async function sendSMS(sms: SMS): Promise<void> {
     const message = await client.messages.create({
       to: sms.to,
       body: sms.body,
+      from: "ISAMESIH AZ",
       messagingServiceSid: messagingServiceSid,
     });
     functions.logger.info(`Successfully sent SMS to ${sms.to}, received sid: ${message.sid}`);
