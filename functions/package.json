@@ -16,7 +16,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@types/crypto-js": "^4.1.0",
-    "@types/lodash": "^4.14.182",
+    "@types/lodash": "^4.14.186",
     "axios": "^0.27.2",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.10.7",
@@ -29,7 +29,7 @@
     "@types/jest": "^27.4.0",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.23.0",
-    "eslint": "^8.8.0",
+    "eslint": "^8.24.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.26.0",
     "firebase-functions-test": "^2.1.0",
