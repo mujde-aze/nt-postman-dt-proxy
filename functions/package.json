@@ -21,7 +21,7 @@
     "crypto-js": "^4.1.1",
     "dayjs": "^1.10.7",
     "firebase-admin": "^11.0.1",
-    "firebase-functions": "^3.21.1",
+    "firebase-functions": "^3.24.1",
     "lodash": "^4.17.21",
     "twilio": "^3.82.1"
   },
