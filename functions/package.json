@@ -17,7 +17,7 @@
   "dependencies": {
     "@types/crypto-js": "^4.1.0",
     "@types/lodash": "^4.14.186",
-    "axios": "^0.27.2",
+    "axios": "^1.1.2",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.5",
     "firebase-admin": "^11.0.1",
