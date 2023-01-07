@@ -1,5 +1,5 @@
 import {PostmanState, resolvePostmanStateByValue} from "../model/PostmanState";
-import {HttpsError} from "firebase-functions/lib/providers/https";
+import {HttpsError} from "firebase-functions/lib/common/providers/https";
 
 describe("The postman state resolver", () => {
   it("Should return NONE if the value is none", () => {

@@ -1,5 +1,5 @@
-import {HttpsError} from "firebase-functions/lib/providers/https";
 import {FaithMilestone, resolveMilestoneByValue} from "../model/FaithMilestone";
+import {HttpsError} from "firebase-functions/lib/common/providers/https";
 
 describe("The faith milestone resolver", () => {
   it("Should return BAPTIZED if the value is milestone_baptized", () => {
